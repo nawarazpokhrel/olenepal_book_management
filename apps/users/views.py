@@ -1,6 +1,7 @@
 import jwt
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
@@ -83,6 +84,7 @@ class ListVerifiedUserView(ListAPIView):
     Use this endpoint to list all the user, verified and unverified will be listed
     """
     serializer_class = serializers.ListVerifiedUserSerializer
+    no_content_error_message = _('No users are verified at the moment')
 
     def get_queryset(self):
         return usecases.ListVerifiedUserUseCase().execute()
