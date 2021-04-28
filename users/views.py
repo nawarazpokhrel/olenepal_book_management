@@ -1,18 +1,20 @@
 import jwt
-from django.contrib.auth import get_user_model
-from django.shortcuts import render
 
-User = get_user_model()
-# Create your views here.
-from drf_yasg.utils import swagger_auto_schema
+from django.contrib.auth import get_user_model
+
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from core.generics import CreateAPIView
+from drf_yasg.utils import swagger_auto_schema
+
+from core.generics import CreateAPIView, ListAPIView
+
 from olenepal_book_management.settings import SECRET_KEY
 from users import serializers, usecases
 from users.mixins import ResponseMixin
+
+User = get_user_model()
 
 
 class RegisterUserView(CreateAPIView, ResponseMixin):
@@ -63,3 +65,23 @@ class VerifyEmailView(generics.GenericAPIView):
         # raise exception if the token sent is wrong
         except jwt.exceptions.DecodeError as e:
             return Response({'error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListUserView(ListAPIView):
+    """
+    Use this endpoint to list all the user i.e both verified and unverified will be listed
+    """
+    serializer_class = serializers.ListUserSerializer
+
+    def get_queryset(self):
+        return usecases.ListUserUseCase().execute()
+
+
+class ListVerifiedUserView(ListAPIView):
+    """
+    Use this endpoint to list all the user, verified and unverified will be listed
+    """
+    serializer_class = serializers.ListVerifiedUserSerializer
+
+    def get_queryset(self):
+        return usecases.ListVerifiedUserUseCase().execute()
