@@ -46,8 +46,8 @@ DEFAULT_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'drf_yasg',
-    'core',
-    'users',
+    'apps.core',
+    'apps.users',
 
 ]
 INSTALLED_APPS = DEFAULT_APPS+THIRD_PARTY_APPS

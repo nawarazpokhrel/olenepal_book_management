@@ -8,8 +8,8 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 from shortuuidfield import ShortUUIDField
 
-from users import validators
-from users.utils import UserType
+from apps.users import validators
+from apps.users.utils import UserType
 
 
 class User(AbstractBaseUser, PermissionsMixin):

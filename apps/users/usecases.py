@@ -4,7 +4,7 @@ from django.urls import reverse
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from users import utils
+from apps.users import utils
 
 User = get_user_model()
 

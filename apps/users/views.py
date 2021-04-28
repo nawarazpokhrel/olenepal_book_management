@@ -8,11 +8,12 @@ from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
 
-from core.generics import CreateAPIView, ListAPIView
+from apps.core.generics import CreateAPIView, ListAPIView
 
 from olenepal_book_management.settings import SECRET_KEY
-from users import serializers, usecases
-from users.mixins import ResponseMixin
+from apps.users import usecases
+from apps.users import serializers
+from apps.core.mixins import ResponseMixin
 
 User = get_user_model()
 
