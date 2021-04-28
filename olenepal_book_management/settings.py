@@ -43,6 +43,7 @@ DEFAULT_APPS = [
 # Third party app
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'drf_yasg',
     'core',
     'users',
 
