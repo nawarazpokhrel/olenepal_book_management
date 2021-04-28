@@ -1,4 +1,4 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from shortuuidfield import ShortUUIDField
 
 from users import validators
+from users.utils import UserType
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -40,13 +41,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         unique=True,
         validators=[validators.validate_phone_number]
     )
-    is_member = models.BooleanField(
-        _('member'),
-        help_text=_(
-            'Designates whether this user should be treated as member. '
-        ),
-        default=False
-    )
     is_active = models.BooleanField(
         _('active'),
         default=True,
@@ -66,11 +60,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=False,
         help_text=_('Designates whether the user is librarian.'),
     )
-    is_student = models.BooleanField(
-        _('student status'),
-        default=False,
-        help_text=_('Designates whether the user is student.'),
-    )
 
     is_verified = models.BooleanField(
         _('verification status'),
@@ -81,7 +70,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     USERNAME_FIELD = 'email'
-    # REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
 
@@ -99,13 +88,109 @@ class User(AbstractBaseUser, PermissionsMixin):
     #         'access': str(refresh.access_token)
     #     }
 
-    # @property
-    # def user_type(self):
-    #     if self.is_superuser:
-    #         return UserType.super_user
-    #     elif self.is_teacher:
-    #         return UserType.teacher_user
-    #     elif self.is_student:
-    #         return UserType.student_user
-    #     else:
-    #         return UserType.librarian_user
+    @property
+    def user_type(self):
+        if self.is_superuser:
+            return UserType.super_user
+        elif self.is_librarian:
+            return UserType.library_user
+        else:
+            return UserType.normal_user
+
+
+class NormalUserManager(BaseUserManager):
+    def get_queryset(self):
+        return super(NormalUserManager, self).get_queryset().filter(
+            is_staff=False,
+            is_superuser=False,
+            is_librarian=False,
+        )
+
+    def create(self, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'is_librarian': False,
+        })
+        return super(NormalUserManager, self).create(**kwargs)
+
+
+class NormalUser(User):
+    """
+    Proxy model for Normal user
+    """
+    objects = NormalUserManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return self.username
+
+
+class LibraryUserManager(BaseUserManager):
+    """
+    Library user manager
+    """
+
+    def get_queryset(self):
+        return super(LibraryUserManager, self).get_queryset().filter(
+            is_staff=False,
+            is_superuser=False,
+            is_librarian=True,
+        )
+
+    def create(self, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'is_librarian': True,
+        })
+        return super(LibraryUserManager, self).create(**kwargs)
+
+
+class LibraryUser(User):
+    """
+    Proxy model for Library user
+    """
+    objects = LibraryUserManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return self.username
+
+
+class AdminUserManager(BaseUserManager):
+    """
+    Admin user manager
+    """
+
+    def get_queryset(self):
+        return super(AdminUserManager, self).get_queryset().filter(
+            is_staff=False,
+            is_superuser=True,
+            is_librarian=False,
+        )
+
+    def create(self, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': True,
+            'is_librarian': False,
+        })
+        return super(AdminUserManager, self).create(**kwargs)
+
+
+class AdminUser(User):
+    """
+    Proxy model for Library user
+    """
+    objects = AdminUserManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return self.username
