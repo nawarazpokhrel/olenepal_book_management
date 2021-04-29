@@ -44,9 +44,11 @@ DEFAULT_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'drf_yasg',
+    'django_filters',
     'apps.core',
     'apps.users',
     'apps.books',
+
 
 ]
 
@@ -96,7 +98,11 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+
     ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend'),
+
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework_simplejwt.permissions.IsAuthenticated',
     # )

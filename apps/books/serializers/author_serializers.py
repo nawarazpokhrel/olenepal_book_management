@@ -12,23 +12,22 @@ class AuthorSerializer(serializers.ModelSerializer):
 class AddAuthorSerializer(AuthorSerializer):
     class Meta(AuthorSerializer.Meta):
         fields = (
-            'name',
-            'address',
-            'phone_number',
+            'user',
             'publication',
         )
 
 
 class ListAuthorSerializer(AuthorSerializer):
     # Formatting date time based on first time and then date
+    user = serializers.CharField()
+    publication = serializers.CharField()
     date_created = serializers.DateTimeField(format='%I-%m %p %Y-%m-%d')
 
     class Meta(AuthorSerializer.Meta):
         fields = (
             'id',
-            'name',
+            'user',
             'address',
-            'phone_number',
             'publication',
             'date_created',
         )
@@ -37,8 +36,6 @@ class ListAuthorSerializer(AuthorSerializer):
 class UpdateAuthorSerializer(AuthorSerializer):
     class Meta(AuthorSerializer.Meta):
         fields = (
-            'name',
-            'address',
-            'phone_number',
+            'user',
             'publication',
         )

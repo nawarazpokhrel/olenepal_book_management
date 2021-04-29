@@ -21,15 +21,16 @@ class PublicationAdmin(BaseModelAdmin):
 @admin.register(models.Author)
 class AuthorAdmin(BaseModelAdmin):
     list_display = BaseModelAdmin.list_display + (
-        'name',
-        'email',
+        'user',
         'address',
-        'phone_number'
     )
 
-    list_display_links = ('name',)
+    list_display_links = ('id',)
 
-    list_filter = ('name',)
+    list_filter = (
+        'user',
+        'publication',
+    )
 
 
 @admin.register(models.Book)
