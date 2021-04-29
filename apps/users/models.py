@@ -84,7 +84,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default_permissions = ()
 
     def __str__(self):
-        return self.fullname
+        return self.username
 
     # @property
     # def tokens(self):
