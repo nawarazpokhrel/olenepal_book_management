@@ -21,7 +21,8 @@ class AddAuthorSerializer(AuthorSerializer):
 
 
 class ListAuthorSerializer(AuthorSerializer):
-    date_created = serializers.DateTimeField(format='%Y-%M-%D')
+    # Formatting date time based on first time and then date
+    date_created = serializers.DateTimeField(format='%I-%m %p %Y-%m-%d')
 
     class Meta(AuthorSerializer.Meta):
         fields = (

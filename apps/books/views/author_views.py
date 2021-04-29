@@ -7,6 +7,9 @@ from apps.books.serializers import author_serializers
 
 
 class AddAuthorViews(generics.CreateAPIView):
+    """
+    Use this endpoint to add authors
+    """
     serializer_class = author_serializers.AddAuthorSerializer
 
     def perform_create(self, serializer):
@@ -14,6 +17,9 @@ class AddAuthorViews(generics.CreateAPIView):
 
 
 class ListAuthorViews(generics.ListAPIView):
+    """
+    Use this endpoint to list authors
+    """
     serializer_class = author_serializers.ListAuthorSerializer
 
     def get_queryset(self):
@@ -21,6 +27,9 @@ class ListAuthorViews(generics.ListAPIView):
 
 
 class UpdateAuthorViews(generics.UpdateAPIView, AuthorMixin):
+    """
+    Use this endpoint to update author
+    """
     serializer_class = author_serializers.UpdateAuthorSerializer
 
     def get_object(self):
@@ -34,6 +43,9 @@ class UpdateAuthorViews(generics.UpdateAPIView, AuthorMixin):
 
 
 class DeleteAuthorViews(generics.DestroyAPIView, AuthorMixin):
+    """
+    Use this endpoint to delete authors
+    """
 
     def get_object(self):
         return self.get_author()
