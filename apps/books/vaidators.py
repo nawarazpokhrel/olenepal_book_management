@@ -26,7 +26,7 @@ class AddressValidator(WordValidator):
         r'^[a-zA-Z0-9]+$'
     )
     multi_word_regex = _lazy_re_compile(
-        r'^[a-zA-Z\s]+$'
+        r'^[a-zA-Z0-9-\s]+$'
     )
 
 
