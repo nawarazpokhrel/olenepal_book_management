@@ -2,6 +2,8 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import generics, status
 from rest_framework.response import Response
 
+from apps.core.exceptions import NoContent
+
 
 class CreateAPIView(generics.CreateAPIView):
 
@@ -18,3 +20,13 @@ class CreateAPIView(generics.CreateAPIView):
 
 class ListAPIView(generics.ListAPIView):
     no_content_error_message = _('No Content At The Moment.')
+
+    def filter_queryset(self, queryset):
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        if len(queryset) > 0:
+            return self.custom_queryset(queryset)
+        raise NoContent(self.no_content_error_message)
+
+    def custom_queryset(self, queryset):
+        return queryset
