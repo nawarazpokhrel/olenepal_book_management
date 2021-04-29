@@ -38,7 +38,6 @@ class ListBookSerializer(BookSerializer):
 
 
 class UpdateBookSerializer(BookSerializer):
-    # To provide publication name instead of publication Id
     class Meta(BookSerializer.Meta):
         fields = (
             'id',
@@ -46,5 +45,21 @@ class UpdateBookSerializer(BookSerializer):
             'edition',
             'available_books',
             'genre',
+        )
+
+
+class AddBookPublicationSerializer(BookSerializer):
+    """
+    To add book to publication
+    """
+    class Meta(BookSerializer.Meta):
+        fields = (
             'publication',
         )
+
+
+class RemoveBookPublicationSerializer(AddBookPublicationSerializer):
+    """
+    To remove book from publication
+    """
+    pass

@@ -13,4 +13,14 @@ urlpatterns = [
         book_views.ListBookView.as_view(),
         name='List-book'
     ),
+    path(
+        '<str:book_id>/publication/add',
+        book_views.AddBookPublicationView.as_view(),
+        name='add-publication-to-book'
+    ),
+    path(
+        '<str:book_id>/publication/remove',
+        book_views.RemoveBookPublicationView.as_view(),
+        name='remove-publication-to-book'
+    ),
 ]

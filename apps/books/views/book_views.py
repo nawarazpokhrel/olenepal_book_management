@@ -4,7 +4,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
 
 from apps.books import filtersets
-from apps.books.mixins import AuthorMixin
+from apps.books.mixins import AuthorMixin, BookMixin
 from apps.books.serializers import book_serializers
 from apps.books.usecases import book_usecases
 from apps.core import generics
@@ -45,3 +45,41 @@ class ListBookView(generics.ListAPIView):
 
     def get_queryset(self):
         return book_usecases.ListBookUseCase().execute()
+
+
+class AddBookPublicationView(generics.CreateAPIView, BookMixin):
+    serializer_class = book_serializers.AddBookPublicationSerializer
+
+    def get_object(self):
+        return self.get_book()
+
+    def perform_create(self, serializer):
+        return book_usecases.AddBookPublicationUseCase(
+            serializer=serializer,
+            book=self.get_book(),
+        ).execute()
+
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     return Response('Publication Added successfully to book', status=status.HTTP_201_CREATED)
+
+
+class RemoveBookPublicationView(generics.CreateAPIView, BookMixin):
+    serializer_class = book_serializers.RemoveBookPublicationSerializer
+
+    def get_object(self):
+        return self.get_book()
+
+    def perform_create(self, serializer):
+        return book_usecases.RemoveBookPublicationUseCase(
+            serializer=serializer,
+            book=self.get_book(),
+        ).execute()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response('Publication removed successfully from book', status=status.HTTP_201_CREATED)

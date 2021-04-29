@@ -7,3 +7,7 @@ from rest_framework.exceptions import NotFound, APIException
 class AuthorNotFound(NotFound):
     default_detail = _('Author not found for given Id.')
 
+
+class BookNotFound(NotFound):
+    default_detail = _('Book not found for given Id.')
+
