@@ -48,8 +48,9 @@ class Author(BaseModel):
         max_length=10,
         validators=[PhoneNumberValidator]
     )
-    publication = models.ManyToManyField(
+    publication = models.ForeignKey(
         Publication,
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -72,12 +73,7 @@ class Book(BaseModel):
     available_books = models.PositiveIntegerField()
     genre = models.CharField(max_length=100)
     grade = models.CharField(max_length=100)
-    publication = models.OneToOneField(
-        Publication,
-        on_delete=models.DO_NOTHING,
-        blank=True,
-        null=True
-    )
+    publication = models.ManyToManyField(Publication)
 
     class Meta:
         default_permissions = ()
@@ -91,7 +87,7 @@ class BookBorrow(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_borrowed = models.DateTimeField()
     return_date = models.DateTimeField()
-    fine_amount = models.PositiveIntegerField()
+    # fine_amount = models.PositiveIntegerField()
     number_of_days_issued = models.PositiveIntegerField(
         null=True,
         blank=True
