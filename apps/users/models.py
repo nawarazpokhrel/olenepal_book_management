@@ -67,6 +67,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Designates whether the user is verified via email or not.'),
     )
 
+    is_author = models.BooleanField(
+        _('author status'),
+        default=False,
+        help_text=_('Designates whether the user is author or not.'),
+    )
+
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
     USERNAME_FIELD = 'email'
@@ -94,6 +100,8 @@ class User(AbstractBaseUser, PermissionsMixin):
             return UserType.super_user
         elif self.is_librarian:
             return UserType.library_user
+        elif self.is_author:
+            return UserType.library_user
         else:
             return UserType.normal_user
 
@@ -104,6 +112,7 @@ class NormalUserManager(BaseUserManager):
             is_staff=False,
             is_superuser=False,
             is_librarian=False,
+            is_author=False,
         )
 
     def create(self, **kwargs):
@@ -111,6 +120,8 @@ class NormalUserManager(BaseUserManager):
             'is_staff': False,
             'is_superuser': False,
             'is_librarian': False,
+            'is_author': False,
+
         })
         return super(NormalUserManager, self).create(**kwargs)
 
@@ -138,6 +149,7 @@ class LibraryUserManager(BaseUserManager):
             is_staff=False,
             is_superuser=False,
             is_librarian=True,
+            is_author=False,
         )
 
     def create(self, **kwargs):
@@ -145,6 +157,7 @@ class LibraryUserManager(BaseUserManager):
             'is_staff': False,
             'is_superuser': False,
             'is_librarian': True,
+            'is_author': False,
         })
         return super(LibraryUserManager, self).create(**kwargs)
 
@@ -172,6 +185,8 @@ class AdminUserManager(BaseUserManager):
             is_staff=False,
             is_superuser=True,
             is_librarian=False,
+            is_author=False,
+
         )
 
     def create(self, **kwargs):
@@ -179,6 +194,8 @@ class AdminUserManager(BaseUserManager):
             'is_staff': False,
             'is_superuser': True,
             'is_librarian': False,
+            'is_author': False,
+
         })
         return super(AdminUserManager, self).create(**kwargs)
 
@@ -188,6 +205,43 @@ class AdminUser(User):
     Proxy model for Library user
     """
     objects = AdminUserManager()
+
+    class Meta:
+        proxy = True
+
+    def __str__(self):
+        return self.username
+
+
+class AuthorUserManager(BaseUserManager):
+    """
+    Author user manager
+    """
+
+    def get_queryset(self):
+        return super(AuthorUserManager, self).get_queryset().filter(
+            is_staff=False,
+            is_superuser=False,
+            is_librarian=False,
+            is_author=True,
+
+        )
+
+    def create(self, **kwargs):
+        kwargs.update({
+            'is_staff': False,
+            'is_superuser': False,
+            'is_librarian': False,
+            'is_author': True
+        })
+        return super(AuthorUserManager, self).create(**kwargs)
+
+
+class AuthorUser(User):
+    """
+    Proxy model for Author user
+    """
+    objects = AuthorUserManager()
 
     class Meta:
         proxy = True

@@ -29,7 +29,7 @@ class BaseUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'phone_number',  'password1', 'password2'),
+            'fields': ('username', 'email', 'phone_number', 'password1', 'password2'),
         }),
     )
     ordering = ('-date_joined',)
@@ -47,7 +47,7 @@ class UserAdmin(BaseUserAdmin):
         (_('Permissions'), {
             'fields': (
                 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_librarian',
-                'is_verified',
+                'is_verified', 'is_author',
             ),
         }),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
@@ -100,6 +100,23 @@ class AdminUserAdmin(BaseUserAdmin):
         )}),
         (_('Permissions'), {
             'fields': ('is_active', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+    )
+
+
+# author user admin
+@admin.register(models.AuthorUser)
+class AuthorUserAdmin(BaseUserAdmin):
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        (_('Personal info'), {'fields': (
+            'email',
+            'phone_number',
+            'full_name',
+        )}),
+        (_('Permissions'), {
+            'fields': ('is_active', 'is_author', 'groups', 'user_permissions'),
         }),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
