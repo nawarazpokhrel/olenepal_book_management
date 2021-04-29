@@ -1,9 +1,12 @@
-from rest_framework import generics, status
+from django.utils.translation import gettext_lazy as _
+
+from rest_framework import status, generics
 from rest_framework.response import Response
 
 from apps.books.mixins import AuthorMixin
 from apps.books.usecases import author_usecases
 from apps.books.serializers import author_serializers
+from apps.core.generics import ListAPIView
 
 
 class AddAuthorViews(generics.CreateAPIView):
@@ -16,10 +19,11 @@ class AddAuthorViews(generics.CreateAPIView):
         return author_usecases.AddAuthorUseCase(serializer=serializer).execute()
 
 
-class ListAuthorViews(generics.ListAPIView):
+class ListAuthorViews(ListAPIView):
     """
     Use this endpoint to list authors
     """
+    no_content_error_message = _('No author details at the moment try adding some authors first.')
     serializer_class = author_serializers.ListAuthorSerializer
 
     def get_queryset(self):
