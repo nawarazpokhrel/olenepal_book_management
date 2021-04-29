@@ -17,7 +17,6 @@ from django.conf import settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -29,10 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
-#Default Apps
+# Default Apps
 DEFAULT_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,9 +46,11 @@ THIRD_PARTY_APPS = [
     'drf_yasg',
     'apps.core',
     'apps.users',
+    'apps.books',
 
 ]
-INSTALLED_APPS = DEFAULT_APPS+THIRD_PARTY_APPS
+
+INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,7 +83,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'olenepal_book_management.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -103,7 +102,6 @@ REST_FRAMEWORK = {
     # )
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -122,7 +120,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -136,7 +133,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -147,7 +143,6 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
