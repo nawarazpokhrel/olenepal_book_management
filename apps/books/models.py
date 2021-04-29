@@ -40,6 +40,9 @@ class Author(BaseModel):
         max_length=100,
         validators=[vaidators.validate_name]
     )
+
+    email = models.EmailField(unique=True)
+
     address = models.CharField(
         max_length=100,
         validators=[vaidators.validate_address]

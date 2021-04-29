@@ -22,6 +22,7 @@ class PublicationAdmin(BaseModelAdmin):
 class AuthorAdmin(BaseModelAdmin):
     list_display = BaseModelAdmin.list_display + (
         'name',
+        'email',
         'address',
         'phone_number'
     )
