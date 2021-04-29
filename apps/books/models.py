@@ -36,21 +36,13 @@ class Publication(BaseModel):
 
 
 class Author(BaseModel):
-    name = models.CharField(
-        max_length=100,
-        validators=[vaidators.validate_name]
-    )
-
-    email = models.EmailField(unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     address = models.CharField(
         max_length=100,
         validators=[vaidators.validate_address]
     )
-    phone_number = models.CharField(
-        max_length=10,
-        validators=[PhoneNumberValidator]
-    )
+
     publication = models.ForeignKey(
         Publication,
         on_delete=models.CASCADE
@@ -60,7 +52,7 @@ class Author(BaseModel):
         default_permissions = ()
 
     def __str__(self):
-        return self.name
+        return self.user.username
 
 
 class Book(BaseModel):
