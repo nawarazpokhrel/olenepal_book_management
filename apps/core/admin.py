@@ -7,7 +7,7 @@ from django.contrib.admin import ModelAdmin
 class BaseModelAdmin(ModelAdmin):
     list_display = (
         'id',
-        'updated_at',
+        'updated_date',
     )
     list_display_links = (
         'id',
@@ -16,7 +16,7 @@ class BaseModelAdmin(ModelAdmin):
         'id',
     )
     ordering = (
-        '-created_at',
+        '-date_created',
     )
     list_per_page = (
         25
