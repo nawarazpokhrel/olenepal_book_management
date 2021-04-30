@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 
-from rest_framework.exceptions import NotFound, APIException
+from rest_framework.exceptions import NotFound
 
 
 class AuthorNotFound(NotFound):
@@ -10,4 +10,8 @@ class AuthorNotFound(NotFound):
 
 class BookNotFound(NotFound):
     default_detail = _('Book not found for given Id.')
+
+
+class PublicationNotFound(NotFound):
+    default_detail = _('Publication not found for given Id.')
 

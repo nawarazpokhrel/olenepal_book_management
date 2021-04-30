@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
@@ -97,3 +96,15 @@ class RemoveBookPublicationUseCase:
                 'publication': _('Publication is not associated with book')
             }
             )
+
+
+class DeleteBookUseCase:
+    def __init__(self, book: Book):
+        self._book = book
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        # delete book instance based on the instance we get from views.py
+        self._book.delete()

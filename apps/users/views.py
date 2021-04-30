@@ -47,6 +47,7 @@ class VerifyEmailView(generics.GenericAPIView):
     """
     Use this to verify user email
     """
+    serializer_class = None
 
     def get(self, request):
         # First get token from user browser
