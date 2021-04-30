@@ -1,8 +1,10 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
 from apps.books.exceptions import BookNotFound
 from apps.books.models import Author, Book
+from apps.core import utils
 
 
 class AddBookUseCase:
@@ -17,6 +19,20 @@ class AddBookUseCase:
     def _factory(self):
         self.book = Book(**self._data, author=self._author)
         self.book.save()
+        # Sending Emails to author
+        email_body = 'Congratulations ' + self.book.author.user.username + \
+                     " Your Book " + \
+                     self.book.name + \
+                     " has been successfully added to our database." + \
+                     " Thank you"
+
+        data = {
+            'email_body': email_body,
+            'email_subject': 'Book added successfully',
+            'to_email': self.book.author.user.email
+        }
+        # call send email function
+        utils.SendEmail.email(data)
 
 
 class ListBookUseCase:
@@ -107,4 +123,21 @@ class DeleteBookUseCase:
 
     def _factory(self):
         # delete book instance based on the instance we get from views.py
+        book_name = self._book.name
+        author_name = self._book.author.user.username
+        author_email = self._book.author.user.email
         self._book.delete()
+        # Sending book is deleted Emails to author
+        email_body = 'Dear ' + author_name + \
+                     " Your Book " + \
+                     book_name + \
+                     " has been successfully deleted from our database." + \
+                     " Thank you"
+
+        data = {
+            'email_body': email_body,
+            'email_subject': 'Book deleted successfully',
+            'to_email': author_email
+        }
+        # call send email function
+        utils.SendEmail.email(data)
