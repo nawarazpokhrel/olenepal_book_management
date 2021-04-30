@@ -16,4 +16,8 @@ urlpatterns = [
         'publication/',
         include('apps.books.urls.publication_urls')
     ),
+    path(
+        '',
+        include('apps.books.urls.book_borrow_urls')
+    ),
 ]

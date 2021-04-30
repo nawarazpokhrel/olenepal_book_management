@@ -65,3 +65,20 @@ class BookBorrowAdmin(BaseModelAdmin):
         'book',
         'user',
     )
+    readonly_fields = ('number_of_days_issued',)
+
+
+@admin.register(models.BookReturn)
+class BookReturnAdmin(BaseModelAdmin):
+    list_display = BaseModelAdmin.list_display + (
+        'book_borrowed',
+        'returned_date',
+        'actual_issued_days',
+    )
+
+    list_display_links = ('book_borrowed',)
+
+    list_filter = (
+        'book_borrowed__book',
+    )
+    readonly_fields = ('actual_issued_days', 'fine_amount',)

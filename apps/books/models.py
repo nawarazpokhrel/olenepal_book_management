@@ -82,11 +82,7 @@ class BookBorrow(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_borrowed = models.DateTimeField()
     return_date = models.DateTimeField()
-    # fine_amount = models.PositiveIntegerField()
-    number_of_days_issued = models.PositiveIntegerField(
-        null=True,
-        blank=True
-    )
+    number_of_days_issued = models.DurationField(null=True, blank=True)
 
     class Meta:
         default_permissions = ()
@@ -105,7 +101,7 @@ class BookBorrow(BaseModel):
                 {'book': _('There are no books available at the moment')})
 
         # Rule 2. If book borrowed date is in past
-        if self.date_borrowed.day < datetime.today().day:
+        if self.date_borrowed.day > datetime.today().day:
             raise DjangoValidationError(
                 {'date_borrowed': _('Book cannot be borrowed from past date')})
 
@@ -115,10 +111,51 @@ class BookBorrow(BaseModel):
                 {'return_date': _('Return date must be not be in past')})
 
     def save(self, *args, **kwargs):
-        self.book.available_books = self.book.available_books - 1
-        self.book.save()
-        self.number_of_days_issued = self.return_date.day - self.date_borrowed.day
-        super(BookBorrow, self).save(*args, **kwargs)
+        if self._state.adding:
+            self.book.available_books -= 1
+            self.book.save()
+            self.number_of_days_issued = self.return_date.date() - self.date_borrowed.date()
+            super(BookBorrow, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.book.name + " Borrowed by " + str(self.user.username)
+
+
+class BookReturn(BaseModel):
+    book_borrowed = models.OneToOneField(
+        BookBorrow,
+        on_delete=models.CASCADE
+    )
+    returned_date = models.DateTimeField()
+    actual_issued_days = models.DurationField(null=True, blank=True)
+    fine_amount = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        default_permissions = ()
+
+    def clean(self):
+        # Rule 1. If return date is in past
+        if not self.returned_date.date() > datetime.today().date():
+            raise DjangoValidationError(
+                {'returned_date': _('Return cannot be borrowed from past date')})
+
+        # Rule 2. If return date smaller than date borrowed
+        if self.returned_date < self.book_borrowed.date_borrowed:
+            raise DjangoValidationError(
+                {'returned_date': _('Returned date must be not be ahead of borrowed')})
+
+    def save(self, *args, **kwargs):
+        # If the operation is only adding
+        if self._state.adding:
+            # calculating days issued
+            self.actual_days_issued_days = self.returned_date.date() - self.book_borrowed.date_borrowed.date()
+            # if actual returned date is greater than return date
+            print(self.actual_days_issued_days)
+            if self.returned_date > self.book_borrowed.return_date:
+                # calculate fine amount
+                self.fine_amount = (self.actual_days_issued_days.days - self.book_borrowed.number_of_days_issued.days
+                                    ) * 10
+            super(BookReturn, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.book_borrowed.book.name
