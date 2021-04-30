@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import DestroyAPIView
+from rest_framework.generics import DestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
 
 from apps.books import filtersets
@@ -103,3 +103,21 @@ class DeleteBookView(DestroyAPIView, BookMixin):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({'deleted': 'Book deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class UpdateBookView(UpdateAPIView, BookMixin):
+    """
+    Use this to update book
+    """
+
+    serializer_class = book_serializers.UpdateBookSerializer
+
+    def get_object(self):
+        return self.get_book()
+
+    def perform_update(self, serializer):
+        return book_usecases.UpdateBookUseCase(
+            book=self.get_object(),
+            serializer=serializer
+        ).execute()
+

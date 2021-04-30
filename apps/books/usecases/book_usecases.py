@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
@@ -114,7 +116,49 @@ class RemoveBookPublicationUseCase:
             )
 
 
+class UpdateBookUseCase:
+    """
+    Update authors
+    """
+
+    def __init__(self, book: Book, serializer):
+        self._book = book
+        self._serializer = serializer
+        self._data = serializer.validated_data
+
+    def execute(self):
+        self._factory()
+
+    def _factory(self):
+        old_book_name = self._book.name
+
+        for key in self._data.keys():
+            # using set attr to update each object sent from serializers
+            setattr(self._book, key, self._data.get(key))
+        self._book.updated_date = datetime.now()
+        # Save book
+        self._book.save()
+        new_book_name = self._book.name
+        email_body = 'Dear, ' + self._book.author.user.username + \
+                     " Your Book " + \
+                     old_book_name + \
+                     " was successfully updated to " + new_book_name + \
+                     " Thank you."
+
+        data = {
+            'email_body': email_body,
+            'email_subject': 'Book updated successfully',
+            'to_email': self._book.author.user.email
+        }
+        # call send email function
+        utils.SendEmail.email(data)
+
+
 class DeleteBookUseCase:
+    """
+    To delete books
+    """
+
     def __init__(self, book: Book):
         self._book = book
 

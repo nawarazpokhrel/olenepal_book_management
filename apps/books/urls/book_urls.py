@@ -28,4 +28,9 @@ urlpatterns = [
         book_views.DeleteBookView.as_view(),
         name='delete-book'
     ),
+    path(
+        '<str:book_id>/update',
+        book_views.UpdateBookView.as_view(),
+        name='update-book'
+    ),
 ]
