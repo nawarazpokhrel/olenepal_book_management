@@ -5,6 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.core import utils
+from apps.users.exceptions import UserNotFound
 
 User = get_user_model()
 
@@ -77,3 +78,22 @@ class ListVerifiedUserUseCase:
 
     def _factory(self):
         self._user = User.objects.filter(is_verified=True)
+
+
+class GetUserUseCase:
+    """
+    get user instance
+    """
+
+    def __init__(self, user_id):
+        self._user_id = user_id
+
+    def execute(self):
+        self._factory()
+        return self._user
+
+    def _factory(self):
+        try:
+            self._user = User.objects.get(pk=self._user_id)
+        except User.DoesNotExist:
+            raise UserNotFound

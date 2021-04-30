@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
@@ -48,6 +48,7 @@ class VerifyEmailView(generics.GenericAPIView):
     Use this to verify user email
     """
     serializer_class = None
+    permission_classes = (AllowAny,)
 
     def get(self, request):
         # First get token from user browser
@@ -75,6 +76,7 @@ class ListUserView(ListAPIView):
     Use this endpoint to list all the user i.e both verified and unverified will be listed
     """
     serializer_class = serializers.ListUserSerializer
+    permission_classes = (IsAdminUser,)
 
     def get_queryset(self):
         return usecases.ListUserUseCase().execute()
@@ -86,6 +88,7 @@ class ListVerifiedUserView(ListAPIView):
     """
     serializer_class = serializers.ListVerifiedUserSerializer
     no_content_error_message = _('No users are verified at the moment')
+    permission_classes = (IsAdminUser,)
 
     def get_queryset(self):
         return usecases.ListVerifiedUserUseCase().execute()
