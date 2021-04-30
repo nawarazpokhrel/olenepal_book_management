@@ -15,3 +15,6 @@ class BookNotFound(NotFound):
 class PublicationNotFound(NotFound):
     default_detail = _('Publication not found for given Id.')
 
+
+class BookBorrowNotFound(NotFound):
+    default_detail = _('Book Borrow not found for given Id.')

@@ -1,10 +1,13 @@
 from apps.books.usecases.author_usecases import GetAuthorUseCase
+from apps.books.usecases.book_borrow_usecases import GetBookBorrowUseCase
 from apps.books.usecases.book_usecases import GetBookUseCase
 from apps.books.usecases.publication_usecases import GetPublicationUseCase
 
 """
 These class are usually made to get model instance of particular model
 """
+
+
 class AuthorMixin:
     def get_author(self):
         return GetAuthorUseCase(
@@ -23,4 +26,11 @@ class PublicationMixin:
     def get_publication(self):
         return GetPublicationUseCase(
             publication_id=self.kwargs.get('publication_id')
+        ).execute()
+
+
+class BookBorrowMixin:
+    def get_book_borrow(self):
+        return GetBookBorrowUseCase(
+            book_borrow_id=self.kwargs.get('book_borrow_id')
         ).execute()

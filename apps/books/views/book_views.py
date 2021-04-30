@@ -1,14 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
-from rest_framework.filters import OrderingFilter
 from rest_framework.generics import DestroyAPIView, UpdateAPIView
+from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
 
 from apps.books import filtersets
 from apps.books.mixins import AuthorMixin, BookMixin
+from apps.users.permissions import IsOwnBook, IsLibrarianUser
 from apps.books.serializers import book_serializers
 from apps.books.usecases import book_usecases
 from apps.core import generics
+from apps.users.permissions import IsAuthorUser
 
 
 class AddBookView(generics.CreateAPIView, AuthorMixin):
@@ -16,13 +18,16 @@ class AddBookView(generics.CreateAPIView, AuthorMixin):
     Use this to add book
     """
     serializer_class = book_serializers.AddBookSerializer
+    permission_classes = (IsAdminUser, IsOwnBook,)
 
     def get_object(self):
+        obj = self.get_author()
+        self.check_object_permissions(self.request, obj)
         return self.get_author()
 
     def perform_create(self, serializer):
         return book_usecases.AddBookUseCase(
-            author=self.get_author(),
+            author=self.get_object(),
             serializer=serializer
         ).execute()
 
@@ -43,6 +48,7 @@ class ListBookView(generics.ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     # ordering_fields = ['edition', 'name']
     filterset_class = filtersets.BookSearchFilter
+    permission_classes = (AllowAny,)
 
     def get_queryset(self):
         return book_usecases.ListBookUseCase().execute()
@@ -50,6 +56,7 @@ class ListBookView(generics.ListAPIView):
 
 class AddBookPublicationView(generics.CreateAPIView, BookMixin):
     serializer_class = book_serializers.AddBookPublicationSerializer
+    permission_classes = (IsAdminUser,)
 
     def get_object(self):
         return self.get_book()
@@ -69,6 +76,8 @@ class AddBookPublicationView(generics.CreateAPIView, BookMixin):
 
 class RemoveBookPublicationView(generics.CreateAPIView, BookMixin):
     serializer_class = book_serializers.RemoveBookPublicationSerializer
+
+    permission_classes = (IsAdminUser,)
 
     def get_object(self):
         return self.get_book()
@@ -91,6 +100,8 @@ class DeleteBookView(DestroyAPIView, BookMixin):
     Use this to delete book
     """
 
+    permission_classes = (IsAdminUser, IsAuthorUser, IsOwnBook,)
+
     def get_object(self):
         return self.get_book()
 
@@ -112,12 +123,15 @@ class UpdateBookView(UpdateAPIView, BookMixin):
 
     serializer_class = book_serializers.UpdateBookSerializer
 
+    permission_classes = (IsOwnBook, IsAdminUser, IsLibrarianUser,)
+
     def get_object(self):
-        return self.get_book()
+        obj = self.get_book()
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def perform_update(self, serializer):
         return book_usecases.UpdateBookUseCase(
             book=self.get_object(),
             serializer=serializer
         ).execute()
-

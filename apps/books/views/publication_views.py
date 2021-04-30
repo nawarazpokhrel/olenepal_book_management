@@ -1,5 +1,6 @@
 from rest_framework import status
 from rest_framework.generics import UpdateAPIView, DestroyAPIView
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
 from apps.books.mixins import PublicationMixin
@@ -13,6 +14,7 @@ class AddPublicationView(generics.CreateAPIView):
     Use this endpoint to add publication
     """
     serializer_class = publication_serializers.AddPublicationSerializer
+    permission_classes = (IsAdminUser,)
 
     def perform_create(self, serializer):
         return publication_usecases.AddPublicationUseCase(serializer=serializer).execute()
@@ -32,6 +34,8 @@ class ListPublicationView(generics.ListAPIView):
     serializer_class = publication_serializers.ListPublicationSerializer
     no_content_error_message = 'No publication At the moment'
 
+    permission_classes = (IsAdminUser,)
+
     def get_queryset(self):
         return publication_usecases.ListPublicationUseCase().execute()
 
@@ -41,6 +45,7 @@ class UpdatePublicationView(UpdateAPIView, PublicationMixin):
     Use this endpoint to update author
     """
     serializer_class = publication_serializers.UpdatePublicationSerializer
+    permission_classes = (IsAdminUser,)
 
     def get_object(self):
         return self.get_publication()
@@ -59,6 +64,8 @@ class DeletePublicationView(DestroyAPIView, PublicationMixin):
 
     def get_object(self):
         return self.get_publication()
+
+    permission_classes = (IsAdminUser,)
 
     def perform_destroy(self, instance):
         return publication_usecases.DeletePublicationUseCase(
