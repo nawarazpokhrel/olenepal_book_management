@@ -335,3 +335,4 @@ fabric.properties
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+/olenepal_book_management/.env
