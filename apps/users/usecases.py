@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.core import utils
 from apps.users.exceptions import UserNotFound
+from olenepal_book_management.tasks import  email
 
 User = get_user_model()
 
@@ -56,7 +57,7 @@ class RegisterUserUseCase:
             'to_email': user_instance.email
         }
         # call send email function
-        utils.SendEmail.email(data)
+        email(data)
         self._result = {
             'user': self._user
         }

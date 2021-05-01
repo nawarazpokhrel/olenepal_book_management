@@ -1,6 +1,5 @@
 from django.core.mail import EmailMessage
 
-
 class SendEmail:
     """
     to send email
