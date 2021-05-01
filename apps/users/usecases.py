@@ -5,8 +5,9 @@ from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.core import utils
+from apps.core.utils import SendEmail
 from apps.users.exceptions import UserNotFound
-from olenepal_book_management.tasks import  email
+# from olenepal_book_management.tasks import  email
 
 User = get_user_model()
 
@@ -57,7 +58,7 @@ class RegisterUserUseCase:
             'to_email': user_instance.email
         }
         # call send email function
-        email(data)
+        SendEmail.email(data)
         self._result = {
             'user': self._user
         }
