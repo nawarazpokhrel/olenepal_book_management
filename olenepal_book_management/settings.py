@@ -13,6 +13,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 import django_heroku
+from django.conf.urls.static import static
+
 
 from dotenv import load_dotenv
 
@@ -194,3 +196,16 @@ CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 django_heroku.settings(locals())
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
