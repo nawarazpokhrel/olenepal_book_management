@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+import django_heroku
 
 from dotenv import load_dotenv
 
@@ -53,8 +54,7 @@ THIRD_PARTY_APPS = [
     'apps.core',
     'apps.users',
     'apps.books',
-
-
+    'djcelery',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS
@@ -190,6 +190,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-CELERY_BROKER_URL = 'amqp://guest:guest@localhost:15672/#/'
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+django_heroku.settings(locals())
