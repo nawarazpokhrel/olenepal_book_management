@@ -1,9 +1,18 @@
-BookManagement System Ole Nepal
-Olenepal is a Python django based API
+# Ole Book Management system Assignment
 
-Installation
-Run
-pip install -r requirements.txt
-use 
-localhost/8000/api/docs 
-for swagger documentation
+This was a simple book management system assigned by Ole Nepal During my python-django assignment
+## Getting Started
+Install all requirments needed in project from requirements.txt file
+
+
+### Installing
+
+Use python -m pip install Django to install django 
+
+## Docs
+Use localhost/8000/api/docs 
+for drf swagger documentation
+
+
+
+
