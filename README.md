@@ -5,4 +5,6 @@ Installation
 Run
 
 pip install -r requirements.txt
-use localhost/8000/api/docs for swagger documentation
+use 
+localhost/8000/api/docs 
+for swagger documentation
