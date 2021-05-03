@@ -15,6 +15,8 @@ from pathlib import Path
 import django_heroku
 from django.conf.urls.static import static
 
+ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
+APPS_DIR = ROOT_DIR / "apps"
 
 from dotenv import load_dotenv
 
@@ -76,8 +78,8 @@ ROOT_URLCONF = 'olenepal_book_management.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'apps/templates')],
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
