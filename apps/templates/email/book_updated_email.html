@@ -1,0 +1,21 @@
+{% load i18n %}
+
+{% block subject %}
+  {% blocktrans %}Ole Nepal - Welcome!{% endblocktrans %}
+{% endblock %}
+
+{% block html_body %}
+  <p>Dear {{ user }}</p>
+  <p>Greetings From Ole  Nepal !</p>
+  <br>
+  <p>Thank You for using ole nepal as a book sharing platform your book {{ old_book_name }} was
+  updated recently to {{ new_book_name }} at time {{ updated_time }}
+  </p>
+  <br>
+  <p>Thank You for being the part of Ole Nepal.
+      We appreciate your interest and are very glad to have you here wish you all the best for your future Endeavor.</p>
+  <p>Takecare and Staysafe.</p>
+  <br>
+  <p>Regards</p>
+  <p>Ole Nepal Team</p>
+{% endblock html_body %}

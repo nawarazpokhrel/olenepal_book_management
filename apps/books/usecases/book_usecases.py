@@ -4,6 +4,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 
+from apps.books.email import ConfirmationEmail, BookUpdateEmail, BookDeletedEmail, BookCreatedEmail
 from apps.books.exceptions import BookNotFound
 from apps.books.models import Author, Book
 from apps.core import utils
@@ -17,24 +18,19 @@ class AddBookUseCase:
 
     def execute(self):
         self._factory()
+        self._send_email()
 
     def _factory(self):
         self.book = Book(**self._data, author=self._author)
         self.book.save()
-        # Sending Emails to author
-        email_body = 'Congratulations ' + self.book.author.user.username + \
-                     " Your Book " + \
-                     self.book.name + \
-                     " has been successfully added to our database." + \
-                     " Thank you"
 
-        data = {
-            'email_body': email_body,
-            'email_subject': 'Book added successfully',
-            'to_email': self.book.author.user.email
+    def _send_email(self):
+        context = {
+            'user': self.book.author.user.username,
+            'book_name': self.book.name,
+            'created_at': self.book.date_created
         }
-        # call send email function
-        utils.SendEmail.email(data)
+        BookCreatedEmail(context=context).send(to=[self.book.author.user.email])
 
 
 class ListBookUseCase:
@@ -128,30 +124,25 @@ class UpdateBookUseCase:
 
     def execute(self):
         self._factory()
+        self._send_email()
 
     def _factory(self):
-        old_book_name = self._book.name
-
+        self.old_book = self._book.name
         for key in self._data.keys():
             # using set attr to update each object sent from serializers
             setattr(self._book, key, self._data.get(key))
         self._book.updated_date = datetime.now()
         # Save book
         self._book.save()
-        new_book_name = self._book.name
-        email_body = 'Dear, ' + self._book.author.user.username + \
-                     " Your Book " + \
-                     old_book_name + \
-                     " was successfully updated to " + new_book_name + \
-                     " Thank you."
 
-        data = {
-            'email_body': email_body,
-            'email_subject': 'Book updated successfully',
-            'to_email': self._book.author.user.email
+    def _send_email(self):
+        context = {
+            'user': self._book.author.user.username,
+            'new_book_name': self._book.name,
+            'old_book_name': self.old_book,
+            'updated_time': self._book.updated_date
         }
-        # call send email function
-        utils.SendEmail.email(data)
+        BookUpdateEmail(context=context).send(to=[self._book.author.user.email])
 
 
 class DeleteBookUseCase:
@@ -164,24 +155,20 @@ class DeleteBookUseCase:
 
     def execute(self):
         self._factory()
+        self._send_email()
 
     def _factory(self):
         # delete book instance based on the instance we get from views.py
         book_name = self._book.name
         author_name = self._book.author.user.username
-        author_email = self._book.author.user.email
         self._book.delete()
-        # Sending book is deleted Emails to author
-        email_body = 'Dear ' + author_name + \
-                     " Your Book " + \
-                     book_name + \
-                     " has been successfully deleted from our database." + \
-                     " Thank you"
-
-        data = {
-            'email_body': email_body,
-            'email_subject': 'Book deleted successfully',
-            'to_email': author_email
-        }
+        self.time_deleted = datetime.now()
         # call send email function
-        utils.SendEmail.email(data)
+
+    def _send_email(self):
+        context = {
+            'user': self._book.author.user.username,
+            'book_name': self._book.name,
+            'deleted_time': self.time_deleted
+        }
+        BookDeletedEmail(context=context).send(to=[self._book.author.user.email])
