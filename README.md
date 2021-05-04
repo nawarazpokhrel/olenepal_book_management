@@ -8,7 +8,7 @@ use `pip install -r requirments.txt`
 
 ### Installing
 
-Use `python -m pip install Django' to install django
+Use `python -m pip install Django` to install django
 
 ## Docs
 Use `localhost/8000/api/docs` 
