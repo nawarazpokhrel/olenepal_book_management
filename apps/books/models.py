@@ -59,6 +59,7 @@ class Book(BaseModel):
     name = models.CharField(
         max_length=100,
         validators=[vaidators.validate_name],
+        unique=True,
     )
     author = models.ForeignKey(
         Author,

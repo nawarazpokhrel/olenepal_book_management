@@ -18,7 +18,7 @@ class AddBookView(generics.CreateAPIView, AuthorMixin):
     Use this to add book
     """
     serializer_class = book_serializers.AddBookSerializer
-    permission_classes = (IsAdminUser, IsOwnBook,)
+    permission_classes = (AllowAny,)
 
     def get_object(self):
         obj = self.get_author()

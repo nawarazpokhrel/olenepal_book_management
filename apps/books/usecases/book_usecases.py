@@ -8,6 +8,7 @@ from apps.books.email import ConfirmationEmail, BookUpdateEmail, BookDeletedEmai
 from apps.books.exceptions import BookNotFound
 from apps.books.models import Author, Book
 from apps.core import utils
+from olenepal_book_management.tasks import send_email_task
 
 
 class AddBookUseCase:
@@ -25,12 +26,17 @@ class AddBookUseCase:
         self.book.save()
 
     def _send_email(self):
-        context = {
-            'user': self.book.author.user.username,
-            'book_name': self.book.name,
-            'created_at': self.book.date_created
+        user = self.book.author.user.username
+        book = self.book.name
+        created = self.book.date_created
+
+        self.context = {
+            'user': user,
+            'book_name': book,
+            'created_at': created
         }
-        BookCreatedEmail(context=context).send(to=[self.book.author.user.email])
+        send_email_task.delay(20)
+        BookCreatedEmail(context=self.context).send(to=[self.book.author.user.email])
 
 
 class ListBookUseCase:
@@ -142,6 +148,7 @@ class UpdateBookUseCase:
             'old_book_name': self.old_book,
             'updated_time': self._book.updated_date
         }
+        send_email_task.delay(20)
         BookUpdateEmail(context=context).send(to=[self._book.author.user.email])
 
 
@@ -159,8 +166,6 @@ class DeleteBookUseCase:
 
     def _factory(self):
         # delete book instance based on the instance we get from views.py
-        book_name = self._book.name
-        author_name = self._book.author.user.username
         self._book.delete()
         self.time_deleted = datetime.now()
         # call send email function
@@ -171,4 +176,5 @@ class DeleteBookUseCase:
             'book_name': self._book.name,
             'deleted_time': self.time_deleted
         }
+        send_email_task.delay(20)
         BookDeletedEmail(context=context).send(to=[self._book.author.user.email])
