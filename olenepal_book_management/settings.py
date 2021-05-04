@@ -58,7 +58,7 @@ THIRD_PARTY_APPS = [
     'apps.core',
     'apps.users',
     'apps.books',
-    'djcelery',
+    # 'djcelery',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS
@@ -195,8 +195,8 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672/'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
 django_heroku.settings(locals())
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
